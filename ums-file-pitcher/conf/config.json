@@ -1,0 +1,173 @@
+{
+
+	"TIME_UNIT": "SEC",
+	"BASE_PATH": "D:\\TEST\\PITCHER\\",
+	
+	"UMS_MONIT": {
+		"PROGRAM_ID": "FILE_PITCHER",
+		"SERVER_NAME": "UMS_FILE_PITCHER",
+		"CYCLE_TIME": 10,
+		"UMS_IPADREESS" : ["http://localhost:8080/", "http://211.241.199.139:8080/"]
+	},
+	"DUPLEX": {
+		"ACTIVATION": true,
+		"DUPLEX_TYPE": "FILE",
+		"IS_MASTER": true,
+		"EXPIRY_TIME": 30
+	},
+	"PITCHERS": {
+		"SDK_PITCHER": {
+			"PATH": "RECEIVE",
+			"CYCLE_TIME": 5,
+			"STAY_LIMIT_TIME": 60,
+			"KEEP_TIME": 86400000,
+			"TARGET_PATH": "PROCESS",
+			"SUCCESS_PATH": "SUCCESS",
+			"FAIL_PATH": "FAIL",
+			"FILE_MAX": 100,
+			"FILE_EXTENTION": "txt",
+			"MAX_THREAD": 20,
+			"DELIMITER": "\\|",
+			"FILE_HEADERS": [
+				"아이디",
+				"이름",
+				"핸드폰번호"
+			],
+			"PITCHER_CLASS": "kr.uracle.ums.fpc.woker.FileParallelPitcher",
+			"HANDLER_CLASS": "kr.uracle.ums.fpc.handler.SDKHttpHandler",
+			"CUSTOM_MAP": {
+				"UMS_URL": "http://localhost:8080/",
+				"TRANS_TYPE": "BATCH"
+			}
+		},
+		"REUSE_PITCHER": {
+			"PATH": "PROCESS",
+			"CYCLE_TIME": 5,
+			"STAY_LIMIT_TIME": 60,
+			"TARGET_PATH": "RECEIVE",
+			"SUCCESS_PATH": "SUCCESS",
+			"FAIL_PATH": "FAIL",
+			"FILE_MAX": 100,
+			"FILE_EXTENTION": "txt",
+			"PITCHER_CLASS": "kr.uracle.ums.fpc.woker.FileReusePitcher"
+		},
+		"FAIL_PITCHER": {
+			"PATH": "FAIL",
+			"SUCCESS_PATH": "SUCCESS",
+			"FAIL_PATH": "FAIL",
+			"CYCLE_TIME": 5,
+			"STAY_LIMIT_TIME": 10,
+			"FILE_MAX": 100,
+			"FILE_EXTENTION": "txt",
+			"PITCHER_CLASS": "kr.uracle.ums.fpc.woker.FileParallelPitcher"
+		}
+	},
+	"ALARM": {
+		"SEND_CHANNEL": "",
+		"TARGETS": [
+			"01012345678",
+			"01011112222"
+		],
+		"MESSAGE": "디렉토리 감시 중 이상 발생 : "
+	},
+	"HELP": {
+		"COMMON": {
+			"TIME_UNIT": [
+				"시간 단위 - HOUR = 시간, MIN = 분 , SEC = 초, MIL =  밀리세컨",
+				"필수X - 기본값: SEC"
+			],
+			"BASE_PATH": [
+				"BASE 경로-절대경로",
+				"필수X - 기본값: 없음",
+				"단, 타 PATH를 상대경로로 지정시 필수임"
+			],
+			"FILE_EXTENTION": [
+				"처리 파일 확장자 - 파일명 SUFFIX",
+				"필수 X - 기본값: txt"
+			],
+			"MAX_THREAD": [
+				"동시 최대 파일 처리 갯수 - 동시 실행 Worker 갯수 제한",
+				"필수X- 기본값: 10"
+			],
+			"DELIMITER": [
+				"파일 내용 구분자",
+				"필수X- 기본값: ;"
+			],
+			"FILE_HEADERS": [
+				"파일 대상 필드 정보 - 배열",
+				"아이디, 이름, 핸드폰번호는 필수 요소",
+				"해당 설정 정보 기준으로 파일 대상자 정보를 조립함",
+				"필수O"
+			],
+			"HANDLER_CLASS": [
+				"파일 처리 핸들러 클래스 정보",
+				"필수 X- 기본값: kr.uracle.ums.fpc.woker.SDKHttpHandler"
+			],
+			"CUSTOM_MAP": [
+				"구현한 핸들러에서 사용할 수 있는 사용자 지정 설정정보 맵",
+				"필수X - 기본값: 없음"
+			]
+		},
+		"DUPLEX": {
+			"ACTIVATION": [
+				"이중화 사용여부",
+				"필수X - 기본값 : false"
+			],
+			"DUPLEX_TYPE": [
+				"이중화 방식 - FILE, DB, API(현재FILE 방식만 지원)",
+				"필수X - 기본값: FILE"
+			],
+			"IS_MASTER": [
+				"마스터 여부",
+				"필수X - 기본값: true"
+			],
+			"EXPIRY_TIME": [
+				"마스터 동작 만료 기준 시간, COMMON의 TIME_UTNIT에 의해 값 변경 됨",
+				"필수X - 기본값: 60초"
+			]
+		},
+		"PATHS": {
+			"RECEIVE": [
+				"RECEIVE의 담당 PITCHER 디렉토리 경로",
+				"필수O - 지정 디렉토리 경로"
+			],
+			"SUCCESS": [
+				"파일 처리 성공 후 옮겨지는 경로",
+				"필수X - 기본값: ${BASE_PATH}/SUCCESS"
+			],
+			"FAIL": [
+				"파일 처리 실패 후 옮겨지는 경로",
+				"필수X - 기본값: ${BASE_PATH}/FAIL"
+			]
+		},
+		"PITCHERS": {
+			"PITCHER명": {
+				"CYCLE_TIME": [
+					"해당 PITCHER의 디렉토리 탐색 주기",
+					"필수 X - 기본값: 3초"
+				],
+				"STAY_LIMIT_TIME": [
+					"담당디렉토리 파일 잔류 최소 시간, 해당 시간보다 오래 된 파일은 알람",
+					"필수 X - 기본값: 0",
+					"값이 0 이면 잔류 여부 체크 안함"
+				],
+				"KEEP_TIME": [
+					"담당디렉토리 파일 보관 기간, 해당 시간보다 오래 된 파일은 삭제함",
+					"필수 X - 기본값: 0",
+					"값이 0 이면 파일 관리 안함"
+				],
+				"TARGET_PATH": [
+					"해당 PITCHER의 디렉토리 탐색 하여 옮겨지는 목적 경로",
+					"필수 X - 기본값: 없음",
+					"해당 설정이 있으면 파일을 목적 경로를 옮긴후 해당 파을을 Hadling 할수 있는 인터페이스 클래스를 제공"
+				],
+				"HANDLER_CLASS": [
+					"파일 처리 핸들러 클래스 정보",
+					"필수 X- 기본값: kr.uracle.ums.fpc.woker.SDKHttpHandler",
+					"TARGET_PATH 설정 값을 지정한 경우 핸들러 클래스를 지정하여 TARGET_PATH로 옮겨진 파일을 핸들링 할수 있음"
+				],
+				"FILE_MAX": 100
+			}
+		}
+	}
+}
