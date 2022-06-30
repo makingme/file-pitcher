@@ -1,5 +1,5 @@
 {
-
+	"NOTE":"기능별 모듈를 만들어서 조립하는 개념으로 변경 해야함, 예를 들어 디렉토리 탐지하는 모듈, 파일을 처리하는 모듈, 알람 모듈 등등을 합치기",
 	"TIME_UNIT": "SEC",
 	"BASE_PATH": "D:\\TEST\\PITCHER\\",
 	
@@ -9,12 +9,14 @@
 		"CYCLE_TIME": 10,
 		"UMS_IPADREESS" : ["http://localhost:8080/", "http://211.241.199.139:8080/"]
 	},
+	
 	"DUPLEX": {
 		"ACTIVATION": true,
 		"DUPLEX_TYPE": "FILE",
 		"IS_MASTER": true,
 		"EXPIRY_TIME": 30
 	},
+	
 	"PITCHERS": {
 		"SDK_PITCHER": {
 			"PATH": "RECEIVE",
@@ -40,6 +42,7 @@
 				"TRANS_TYPE": "BATCH"
 			}
 		},
+		
 		"REUSE_PITCHER": {
 			"PATH": "PROCESS",
 			"CYCLE_TIME": 5,
@@ -51,6 +54,7 @@
 			"FILE_EXTENTION": "txt",
 			"PITCHER_CLASS": "kr.uracle.ums.fpc.woker.FileReusePitcher"
 		},
+		
 		"FAIL_PITCHER": {
 			"PATH": "FAIL",
 			"SUCCESS_PATH": "SUCCESS",
@@ -62,6 +66,21 @@
 			"PITCHER_CLASS": "kr.uracle.ums.fpc.woker.FileParallelPitcher"
 		}
 	},
+	"PITCHER_EX":{
+		"A_PITCHER": {
+			"PATH":"",
+			"DETECTION_CLASS":"",
+			"ROGUING_CLASS":"",
+			"PRE_HANDLE_CLASS":"",
+			"MAIN_HANDLE_CLASS":"",
+			"POST_HANDLE_CLASS":"",
+			"PARAM_MAP": {
+				"UMS_URL": "http://localhost:8080/",
+				"TRANS_TYPE": "BATCH"
+			}
+		}
+	},
+	
 	"ALARM": {
 		"SEND_CHANNEL": "",
 		"TARGETS": [
