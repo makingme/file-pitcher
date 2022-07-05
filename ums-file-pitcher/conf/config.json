@@ -6,7 +6,7 @@
 	"UMS_MONIT": {
 		"PROGRAM_ID": "FILE_PITCHER",
 		"SERVER_NAME": "UMS_FILE_PITCHER",
-		"CYCLE_TIME": 10,
+		"CYCLE_TIME": 60,
 		"UMS_IPADREESS" : ["http://localhost:8080/", "http://211.241.199.139:8080/"]
 	},
 	

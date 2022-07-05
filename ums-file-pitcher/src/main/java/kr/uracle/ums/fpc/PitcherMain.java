@@ -29,7 +29,7 @@ public class PitcherMain {
 		// 모니터링 서버 체크 TCP 모듈 기동
 		TcpAliveConManager.getInstance().init(null, monitConfig.getUMS_IPADREESS(), monitConfig.getCYCLE_TIME());
 		// 모니터링 전송 쓰레드 기동
-		TpsManager.getInstance(monitConfig);
+		TpsManager.initialize(monitConfig);
 		
 		// 파일 피쳐 매니저 기동
 		FilePitcherManager manager = new FilePitcherManager(rootConfig);

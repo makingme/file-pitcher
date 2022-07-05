@@ -44,7 +44,6 @@ public class TpsManager {
     private final Timer scheduler = new Timer();;
     private Gson gson = new Gson();
 
-
     public enum TPSSERVERKIND {UMS_FILEPITCHER};
 
     private TpsManager(UmsMonitoringConfigBean config){
@@ -54,11 +53,12 @@ public class TpsManager {
         this.CYCLE_TIME = config.getCYCLE_TIME();
         startScheduler();
     }
-
-    public synchronized static TpsManager getInstance(UmsMonitoringConfigBean config) {
-        if(instance==null){
-            instance = new TpsManager(config);
-        }
+    
+    public static void initialize(UmsMonitoringConfigBean config) {
+    	instance = new TpsManager(config);
+    }
+    
+    public synchronized static TpsManager getInstance() {
         return instance;
     }
 
@@ -230,7 +230,7 @@ public class TpsManager {
                     logger.error("UMS 모니터링 정보 호출시 에러발생. 이유 : "+e.toString());
                 }
             }
-        }, 0, 1 * 60 * 1000);
+        }, 0, CYCLE_TIME);
     }
     
     public void stopScheduler() {

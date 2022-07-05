@@ -73,7 +73,7 @@ public abstract class Handler extends Thread{
 		log.info("{} 파일 처리 완료, 처리 결과:{}", SOURCE_PATH, isSuccess);
 		isSuccess =  postProcess(SOURCE_PATH, isSuccess);
 		log.info("{} 파일 후처리 완료,  후처리 결과:{}", SOURCE_PATH, isSuccess);
-		if(inputCnt > 0 ) TpsManager.getInstance(MONIT_CONFIG).addProcessCnt(inputCnt);
+		if(inputCnt > 0 ) TpsManager.getInstance().addProcessCnt(inputCnt);
 		
 	}
 	
@@ -118,7 +118,7 @@ public abstract class Handler extends Thread{
 				}
 			}
 			writer.flush();
-			TpsManager.getInstance(MONIT_CONFIG).addInputCnt(inputCnt);
+			TpsManager.getInstance().addInputCnt(inputCnt);
 		}catch(IOException e) {
 			log.error("{} 파일 처리 중 에러 발생:{}",source.toString(), e);
 			return false;

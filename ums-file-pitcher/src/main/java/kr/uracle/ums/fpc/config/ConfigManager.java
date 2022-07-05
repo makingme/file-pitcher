@@ -43,12 +43,12 @@ public class ConfigManager {
 		this.baseCharset = System.getenv("PITCHER_CHARSET") != null ? System.getenv("PITCHER_CHARSET") : this.baseCharset;
 	}
 	
-	public ConfigManager(String path, String rootFileName, String charset) {
-		if(StringUtils.isBlank(path)) path =this.baseFilePath;
+	public ConfigManager(String baseFilePath, String charset) {
+		if(StringUtils.isBlank(baseFilePath)) baseFilePath =this.baseFilePath;
 		if(StringUtils.isBlank(charset))  charset =this.baseCharset;
 		
-		baseFilePath = System.getenv("PITCHER_CONFIG") != null ? System.getenv("PITCHER_CONFIG") : path;
-		baseCharset = System.getenv("PITCHER_CHARSET") != null ? System.getenv("PITCHER_CHARSET") : charset;
+		this.baseFilePath =  baseFilePath;
+		this.baseCharset = charset;
 	}
 	
 	public boolean load() { return load(baseFilePath, baseCharset); }

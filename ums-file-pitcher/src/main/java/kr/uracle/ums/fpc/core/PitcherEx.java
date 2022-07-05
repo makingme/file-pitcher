@@ -25,18 +25,18 @@ public class PitcherEx extends Thread{
 	private long leadTime =0;
 			
 	private Detect detect = null;
-	private Roguing roguing = null;
-	private PreHandle preHandler = null;
-	private MainHandle mainHandler = null;
-	private PostHandle postHandler = null;
+	private Filter roguing = null;
 	
 	public PitcherEx() {}
 	
-	
 	public boolean init(){return true;}
-		
+	
+	public void close() {
+		isRun = false;
+	}
+	
 	public void run() {
-		
+		isRun = init();
 		while(isRun) {
 			status = PitcherStatus.READY;
 			try {
@@ -55,7 +55,7 @@ public class PitcherEx extends Thread{
 			// 수행 시작 시간 - 매니저에서 Hang 여부 판단을 위해 기록해둠 
 			startTime = System.currentTimeMillis();
 			status = PitcherStatus.DETECTION;
-			List<Path> pathList = detect.process(Paths.get(""), "");
+			List<Path> pathList = detect.detect(Paths.get(""));
 			if(pathList == null) {
 				//에러 알람 발송 호출
 			}
@@ -70,20 +70,24 @@ public class PitcherEx extends Thread{
 			
 			boolean isSuccess = false;
 			for(Path p : pathList) {
-				if(preHandler != null) {
-					status = PitcherStatus.PRE_HANDLE;
-					isSuccess = preHandler.process(p);
-				}
 				
-				if(mainHandler != null) {
-					status = PitcherStatus.MAIN_HANDLE;
-					isSuccess = mainHandler.handle(p, isSuccess);
-				}
+				HandlerEx h = new HandlerEx(p);
+				h.start();
 				
-				if(postHandler != null) {
-					status = PitcherStatus.POST_HANDLE;
-					isSuccess = postHandler.postHandle(p, isSuccess);
-				}
+//				if(preHandler != null) {
+//					status = PitcherStatus.PRE_HANDLE;
+//					isSuccess = preHandler.process(p);
+//				}
+//				
+//				if(mainHandler != null) {
+//					status = PitcherStatus.MAIN_HANDLE;
+//					isSuccess = mainHandler.handle(p, isSuccess);
+//				}
+//				
+//				if(postHandler != null) {
+//					status = PitcherStatus.POST_HANDLE;
+//					isSuccess = postHandler.process(p, isSuccess);
+//				}
 			}
 			
 			leadTime = System.currentTimeMillis() - startTime;

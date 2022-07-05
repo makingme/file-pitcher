@@ -9,8 +9,16 @@ import org.slf4j.LoggerFactory;
 
 import kr.uracle.ums.fpc.utils.AlarmManager;
 
+/**
+ * @author : URACLE KKB
+ * @see : logger - 로거 인스턴스 멤버 변수
+ * @see : PRCS_NAME - 프로세스 명 멤버 변수
+ * @see : PARAM_MAP - Map(String, Object) 타입의 사용자 지정 설정 정보를 담은 멤버 변수
+ * @see : 사용자 지정 설정(PARAM_MAP)에 PRE_ALARM : Y 설정 정보 지정 시 전처리 실패 시 알람 발송 지원 
+ */
 public abstract class PreHandle {
-	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	protected final String PRCS_NAME;
 	
@@ -18,23 +26,37 @@ public abstract class PreHandle {
 	
 	protected final boolean needAlarm;
 	
+	/**
+	 * @param PRCS_NAME : 프로세스 명
+	 * @param PARAM_MAP : 사용자 지정 설정 값 - 설정 파일 지정 가능
+	 */
 	public PreHandle(String PRCS_NAME, Map<String, Object> PARAM_MAP) {
 		this.PARAM_MAP = PARAM_MAP;
 		this.PRCS_NAME = PRCS_NAME;
 		
-		Object o =PARAM_MAP.get("PREHANDLE_ALARM_USEYN");
+		Object o =PARAM_MAP.get("PRE_ALARM");
 		String yn = ObjectUtils.isEmpty(o)?"N":o.toString();
 		needAlarm = yn.equalsIgnoreCase("Y")?true:false;
 	}
 	
+	/**
+	 * @see 필수 값 및 사용자 지정 멤버 변수 초기화
+	 * @return 초기화 성공 여부
+	 */
+	abstract public boolean initailize();
+	
+	/**
+	 * @param path : 처리할 파일 경로(절대 경로)
+	 * @return	전처리 성공 여부, 실패 시 PREHANDLE_ALARM 설정 여부에 따른 알람 발송
+	 */
 	abstract public boolean process(Path path);
 	
-	public boolean  preHandle(Path path) {
+	public boolean handle(Path path) {
 		boolean isOk = process(path);
 		if(needAlarm && isOk == false) {
-			sendAlarm(PRCS_NAME+", "+path.toString()+" 파일 전처리 중 에러 발생");
+			String msg = PRCS_NAME+", "+path.toString()+" 파일 전처리 중 에러 발생";
+			sendAlarm(msg);
 		}
-		
 		return isOk;
 	}
 	
