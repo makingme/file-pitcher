@@ -99,8 +99,8 @@ public abstract class Pitcher extends Thread{
 			private static final long serialVersionUID = 1L;
 			protected boolean removeEldestEntry(Map.Entry<Integer, Long> eldest) {
 					return size() >= FILE_MAX;
-				}
-			};
+			}
+		};
 		
 	}
 	

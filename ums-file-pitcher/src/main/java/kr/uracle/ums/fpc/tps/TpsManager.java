@@ -7,12 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
 
 import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
 import kr.uracle.ums.fpc.tcpchecker.TcpAliveConManager;
@@ -36,14 +33,13 @@ public class TpsManager {
     private String chek_date = "";
     private static TpsManager instance = null;
 
-    private final String PROGRAM_ID;
-    private final String SERVER_ID;
-    private final String SERVER_NAME;
-    private final long CYCLE_TIME;
+    private  String PROGRAM_ID;
+    private  String SERVER_ID;
+    private  String SERVER_NAME;
+    private  long CYCLE_TIME;
     
     private final Timer scheduler = new Timer();;
-    private Gson gson = new Gson();
-
+   
     public enum TPSSERVERKIND {UMS_FILEPITCHER};
 
     private TpsManager(UmsMonitoringConfigBean config){
@@ -54,11 +50,18 @@ public class TpsManager {
         startScheduler();
     }
     
+    private TpsManager(){
+    	startReSetScheduler();
+    }
+    
     public static void initialize(UmsMonitoringConfigBean config) {
     	instance = new TpsManager(config);
     }
     
     public synchronized static TpsManager getInstance() {
+    	if(instance == null) {
+    		new TpsManager();
+    	}
         return instance;
     }
 
@@ -229,6 +232,17 @@ public class TpsManager {
                 }catch (Exception e){
                     logger.error("UMS 모니터링 정보 호출시 에러발생. 이유 : "+e.toString());
                 }
+            }
+        }, 0, CYCLE_TIME);
+    }
+    
+    public void startReSetScheduler() {
+        logger.info("### TPS MANAGER 스케줄 START!");
+        scheduler.schedule(new TimerTask() {
+            @Override
+            public void run() {
+            	logger.debug("### TPS MANAGER  one minute Sent total count: {}", ums_pre_process_cnt);
+                tpsCountReset();
             }
         }, 0, CYCLE_TIME);
     }

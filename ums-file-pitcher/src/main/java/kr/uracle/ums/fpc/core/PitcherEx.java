@@ -8,6 +8,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
+import kr.uracle.ums.fpc.config.bean.PitcherExConfigBean;
+import kr.uracle.ums.fpc.config.bean.RootConfigExBean;
+
 
 public class PitcherEx extends Thread{
 
@@ -18,18 +22,33 @@ public class PitcherEx extends Thread{
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	protected PitcherStatus status = PitcherStatus.READY;
+	
 	protected boolean isRun = false;
 	protected boolean isMaster = false;
+	
+	private final AlarmConfigBean alarm;
+	private final PitcherExConfigBean config;
 	
 	private long startTime = 0;
 	private long leadTime =0;
 			
 	private Detect detect = null;
 	private Filter roguing = null;
+	private PreHandle preHandler = null;
+	private MainHandle mainHandler = null;
+	private PostHandle postHandler = null;
 	
-	public PitcherEx() {}
+	public PitcherEx(String name, RootConfigExBean rootConfigBean, PitcherExConfigBean config) {
+		setName(name);
+		this.isMaster = rootConfigBean.getDUPLEX().isIS_MASTER();
+		this.alarm = rootConfigBean.getALARM();
+		this.config = config;
+	}
 	
-	public boolean init(){return true;}
+	public boolean init(){
+		isRun = true;
+		return true;
+	}
 	
 	public void close() {
 		isRun = false;
@@ -51,7 +70,6 @@ public class PitcherEx extends Thread{
 				continue;
 			}
 			
-
 			// 수행 시작 시간 - 매니저에서 Hang 여부 판단을 위해 기록해둠 
 			startTime = System.currentTimeMillis();
 			status = PitcherStatus.DETECTION;
@@ -68,10 +86,11 @@ public class PitcherEx extends Thread{
 				}
 			}
 			
-			boolean isSuccess = false;
 			for(Path p : pathList) {
-				
 				HandlerEx h = new HandlerEx(p);
+				h.setPreHandler(preHandler);
+				h.setMainHandler(mainHandler);
+				h.setPostHandler(postHandler);
 				h.start();
 				
 //				if(preHandler != null) {

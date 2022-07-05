@@ -4,11 +4,13 @@ package kr.uracle.ums.fpc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kr.uracle.ums.fpc.config.ConfigExManager;
+import kr.uracle.ums.fpc.config.bean.PitcherExConfigBean;
 import kr.uracle.ums.fpc.config.bean.RootConfigExBean;
 import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
 import kr.uracle.ums.fpc.core.PitcherEx;
@@ -28,9 +30,15 @@ public class PitcherManager extends Thread{
 	}
 	
 	public boolean manage() {
-		boolean isOk = true;
+		for(Entry<String, PitcherExConfigBean> e : rootConfigBean.getPITCHERS().entrySet()) {
+			String name = e.getKey();
+			PitcherExConfigBean config = e.getValue();
+			PitcherEx px = new PitcherEx(name, rootConfigBean, config);
+			pitcherExList.add(px);
+			px.start();
+		}
 		
-		return isOk;
+		return true;
 	}
 	
 	@Override
@@ -52,19 +60,27 @@ public class PitcherManager extends Thread{
 		
 		// 설정 빈 가져오기
 		RootConfigExBean rootConfig = configManager.getRootConfig();
-		
+	
 		// 모니터링 설정 가져오기
 		UmsMonitoringConfigBean monitConfig = rootConfig.getUMS_MONIT();
-		// 모니터링 서버 체크 TCP 모듈 기동
-		TcpAliveConManager.getInstance().init(null, monitConfig.getUMS_IPADREESS(), monitConfig.getCYCLE_TIME());
-		// 모니터링 전송 쓰레드 기동
-		TpsManager.initialize(monitConfig);
 		
+		if(monitConfig != null) {
+			// 모니터링 서버 체크 TCP 모듈 기동
+			TcpAliveConManager.getInstance().init(null, monitConfig.getUMS_IPADREESS(), monitConfig.getCYCLE_TIME());
+			// 모니터링 전송 쓰레드 기동
+			TpsManager.initialize(monitConfig);
+		}
+		
+		// 매니저 Instance 생성
 		PitcherManager manager = new PitcherManager(rootConfig);
+		// JVM Hook Add 
 		Runtime.getRuntime().addShutdownHook(manager);
 		
+		// Pitchers Start & Monitoring Start
 		isOk = manager.manage();
-		
+		if(isOk ==false) {
+			return;
+		}
 		
 	}
 	

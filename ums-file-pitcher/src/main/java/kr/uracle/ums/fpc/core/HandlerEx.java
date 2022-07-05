@@ -10,8 +10,6 @@ public class HandlerEx extends Thread{
 	private MainHandle mainHandler = null;
 	private PostHandle postHandler = null;
 	
-	
-	
 	public HandlerEx(Path TARGET_PATH) {
 		this.TARGET_PATH = TARGET_PATH;
 	}
@@ -31,5 +29,9 @@ public class HandlerEx extends Thread{
 			isOk = postHandler.handle(TARGET_PATH, isOk);
 		}
 	}
+	
+	public void setPreHandler(PreHandle preHandler) { this.preHandler = preHandler;	}
+	public void setMainHandler(MainHandle mainHandler) { this.mainHandler = mainHandler; }
+	public void setPostHandler(PostHandle postHandler) { this.postHandler = postHandler; }
 	
 }

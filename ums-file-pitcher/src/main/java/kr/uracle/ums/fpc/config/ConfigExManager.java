@@ -82,6 +82,7 @@ public class ConfigExManager {
 				log.error("BASE_PATH 설정 값 누락");
 				return false;
 			}
+			
 			if(Paths.get(basePath).isAbsolute() == false) {
 				log.error("BASE_PATH 설정 값({})은 절대경로 만 가능, 설정 로드 실패", basePath);
 				return false;
