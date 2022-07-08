@@ -214,7 +214,7 @@ public class TpsManager {
                 try {
                     // UMS에 모니터링정보 수집할수 있도록 호출
                     String ums_host_url = TcpAliveConManager.getInstance().getConHostName();
-                    String umsCallApi = ums_host_url+"monit/report.ums";
+                    String umsCallApi = ums_host_url;
                     Map<String,Object> reqParam = new HashMap<>();
                     reqParam.put("PROGRAM_ID"	,	PROGRAM_ID);
                     reqParam.put("SERVER_ID"	,	SERVER_ID);
@@ -225,7 +225,7 @@ public class TpsManager {
                     reqParam.put("SUMMARY"		,	getSummaryData());
                     ResponseBean responseBean = HttpPoolClient.getInstance().sendJsonPost(umsCallApi,reqParam);
                     if(responseBean.getStatusCode()==200 || responseBean.getStatusCode()==201){
-                        logger.info("UMS 모니터링 정보 호출 성공 :"+responseBean.getBody());
+                        logger.debug("UMS 모니터링 정보 호출 성공 :"+responseBean.getBody());
                     }else{
                         logger.info("UMS 모니터링 정보 호출 에러 : HTTP ERROCODE:"+responseBean.getStatusCode()+" HTTP BODY:" +responseBean.getBody());
                     }

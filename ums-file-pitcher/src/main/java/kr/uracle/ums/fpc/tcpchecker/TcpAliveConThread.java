@@ -44,12 +44,10 @@ public class TcpAliveConThread extends Thread{
                     }
 
                 } catch (SocketTimeoutException exception) {
-                    
-                	logger.error("SocketTimeoutException [" + hostName + "] : " + tcpAliveHostBean.getSocketAddress().toString() + ". " + exception.toString());
+                	logger.debug("SocketTimeoutException [" + hostName + "] : " + tcpAliveHostBean.getSocketAddress().toString() + ". " + exception.toString());
                     tcpAliveConManager.failConSocketAddress(hostName, tcpAliveHostBean.getSocketAddress());
                 } catch (IOException exception) {
-                    
-                	logger.error("IOException - Unable to connect to [" + hostName + "] : " + tcpAliveHostBean.getSocketAddress().toString() + ". " + exception.toString());
+                	logger.debug("IOException - Unable to connect to [" + hostName + "] : " + tcpAliveHostBean.getSocketAddress().toString() + ". " + exception.toString());
                 	tcpAliveConManager.failConSocketAddress(hostName, tcpAliveHostBean.getSocketAddress());                    
                 }
             }

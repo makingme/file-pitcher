@@ -7,7 +7,7 @@
 		"PROGRAM_ID": "FILE_PITCHER",
 		"SERVER_NAME": "UMS_FILE_PITCHER",
 		"CYCLE_TIME": 60,
-		"UMS_IPADREESS" : ["http://localhost:8080/", "http://211.241.199.139:8080/"]
+		"UMS_IPADREESS" : ["http://localhost:8080/api/monit/report.ums", "http://211.241.199.139:8080/api/monit/report.ums"]
 	},
 	
 	"DUPLEX": {
@@ -20,6 +20,8 @@
 	"PITCHERS":{
 		"A_PITCHER": {
 			"PATH":"D:\\TEST\\PITCHEREX\\RECEIVE\\",
+			"MAX_THREAD":3,
+			"CYCLE": 3000,
 			"DETECTION_CLASS":"kr.uracle.ums.fpc.woker.BasicDetect",
 			"FILTER_CLASS":"kr.uracle.ums.fpc.woker.ZeroFileFilter",
 			"PREHANDLE_CLASS":"kr.uracle.ums.fpc.woker.FileMovePreHandle",
@@ -27,11 +29,12 @@
 			"POSTHANDLE_CLASS":"kr.uracle.ums.fpc.woker.ResultMovePostHandle",
 			"PARAM_MAP": {
 				"DETECT_ALARM" : "Y",
-				"WATCH_TIME": 30000,
+				"WATCH_TIME": "15000",
 				"PATTERN": ".+[\\.]txt$",
 				"FILTER_ALARM": "Y",
 				"ERROR_PATH" : "D:\\TEST\\PITCHEREX\\ERROR\\",
 				"PRE_ALARM" : "Y",
+				"DATE_PATTEN" : "yyyyMMdd_HHmmss",
 				"PROCCESS_PATH" : "D:\\TEST\\PITCHEREX\\PROCCESS\\",
 				"MAIN_ALARM" : "Y",
 				"HEADER_LIST" : ["아이디", "이름", "핸드폰번호"],
@@ -45,11 +48,8 @@
 	},
 	
 	"ALARM": {
+		"URL":"http://211.241.199.137:8080/api/monit/alarmSendApi.ums",
 		"SEND_CHANNEL": "SMS",
-		"TARGETS": [
-			"01012345678",
-			"01011112222"
-		],
 		"MESSAGE": "[AP1 파일 AGT] "
 	},
 	"HELP": {

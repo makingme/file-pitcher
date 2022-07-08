@@ -7,7 +7,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.utils.AlarmManager;
+import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
+import kr.uracle.ums.sdk.util.UmsAlarmSender;
 
 /**
  * @author : URACLE KKB
@@ -18,11 +19,13 @@ import kr.uracle.ums.fpc.utils.AlarmManager;
  */
 public abstract class PostHandle {
 	
-	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	protected final String PRCS_NAME;
 	
 	protected final Map<String, Object> PARAM_MAP;
+	
+	protected final AlarmConfigBean ALARM_CONFIG;
 	
 	protected final boolean needAlarm;
 	
@@ -30,9 +33,10 @@ public abstract class PostHandle {
 	 * @param PRCS_NAME : 프로세스 명
 	 * @param PARAM_MAP : 사용자 지정 설정 값 - 설정 파일 지정 가능
 	 */
-	public PostHandle(String PRCS_NAME, Map<String, Object> PARAM_MAP) {
-		this.PARAM_MAP = PARAM_MAP;
+	public PostHandle(String PRCS_NAME, Map<String, Object> PARAM_MAP, AlarmConfigBean ALARM_CONFIG) {
 		this.PRCS_NAME = PRCS_NAME;
+		this.PARAM_MAP = PARAM_MAP;
+		this.ALARM_CONFIG = ALARM_CONFIG;
 		
 		Object o =this.PARAM_MAP.get("POST_ALARM");
 		String yn = ObjectUtils.isEmpty(o)?"N":o.toString();
@@ -48,20 +52,28 @@ public abstract class PostHandle {
 
 	/**
 	 * @param path : 처리할 파일 경로(절대 경로)
-	 * @param isMainSuccess : : 본 처리 결과 - 본 처리 지정 안했다면 무조건 TRUE
-	 * @return 본 처리 성공 여부, 실패 시 POST_ALARM 설정 여부에 따른 알람 발송
+	 * @param mainResultCode : 본 처리 결과 - 전처리 지정 안했다면 무조건 0
+	 * @return 처리 건수, 에러(실패) 시 음수(-1) 값 RETURN - POST_ALARM 설정 여부에 따른 알람 발송
 	 */
-	abstract public boolean process(Path path, boolean isMainSuccess);
+	abstract public int process(Path path, int mainResultCode);
 	
-	public boolean  handle(Path path, boolean isMainSuccess) {
-		boolean isOk = process(path, isMainSuccess);
-		if(needAlarm && isOk == false) {
-			sendAlarm(PRCS_NAME+", "+path.toString()+" 파일 후처리 중 에러 발생");
+	public int handle(Path path, int mainResultCode) {
+		int prcsCnt = 0;
+		try {
+			prcsCnt = process(path, mainResultCode);			
+		}catch(Exception e) {
+			prcsCnt =-1;
+			e.printStackTrace();
 		}
-		return isOk;
+		
+		if(needAlarm && prcsCnt <= 0) {
+			sendAlarm(PRCS_NAME+", "+path.toString()+", 파일 후처리 실패");
+		}
+		return prcsCnt;
 	}
 	
 	public void sendAlarm(String msg) {
-		AlarmManager.getInstance().sendAlarm(msg);
+		msg = ALARM_CONFIG.getPREFIX_MESSAGE()+msg;
+		UmsAlarmSender.getInstance().sendAlarm(ALARM_CONFIG.getSEND_CHANNEL() , ALARM_CONFIG.getURL(), msg);
 	}
 }

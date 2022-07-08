@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds">
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="STDOUT_BACK" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<pattern>%d{HH:mm:ss:SSS} [%20.20class{0}] [%20.20thread] [%20.20method] [%.5level] - %msg%n</pattern>
+		</layout>
+	</appender>
+	
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d{HH:mm:ss:SSS} [%20.20class{0}] [%20.20thread] [%5.5level] - %msg%n</pattern>
 		</layout>
 	</appender>
 	
