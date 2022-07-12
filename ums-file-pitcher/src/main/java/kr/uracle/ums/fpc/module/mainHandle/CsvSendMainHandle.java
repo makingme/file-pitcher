@@ -108,12 +108,25 @@ public class CsvSendMainHandle extends MainHandle{
 	public int process(Path path, int preResultCode) {
 		int prcsCnt = 0;
 		
+		if(StringUtils.isBlank(ERROR_PATH)) {
+			ERROR_PATH = path.getParent().getParent()+File.separator+PRCS_NAME+"_ERROR"+File.separator;
+		}
+		
+		Path errorPath = Paths.get(ERROR_PATH);
+		if(Files.exists(errorPath) == false) {
+			try {
+				Files.createDirectories(errorPath);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return -1;
+			}
+			logger.info("{} 디렉토리 생성", ERROR_PATH);
+		}			
+		
 		try {			
 			// 전처리 실패에된 파일을 에러 디렉토리 경로로 이동
 			if(preResultCode < 0) {
-				String errorPath = StringUtils.isBlank(ERROR_PATH)?path.getParent().getParent()+File.separator+PRCS_NAME+"_ERROR":ERROR_PATH;
-				if(errorPath.endsWith(File.separator) == false ) errorPath+=File.separator;
-				Files.move(path, Paths.get(errorPath+path.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+				Files.move(path, Paths.get(ERROR_PATH+path.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
 				return 1;
 			}
 		}catch (Exception e) {
@@ -159,8 +172,9 @@ public class CsvSendMainHandle extends MainHandle{
 	private int parseFile(Path p, Map<String, String> commonMap) {
 
 		// UMS CSV 발송을 위한 CSV 파일
-		CSV_PATH = StringUtils.isNotBlank(CSV_PATH)?CSV_PATH:p.getParent().getParent()+File.separator+ PRCS_NAME+"_CSV";
-		if(CSV_PATH.endsWith(File.separator) == false) CSV_PATH +=File.separator;
+		if(StringUtils.isBlank(CSV_PATH)) {
+			CSV_PATH = p.getParent().getParent()+File.separator+ PRCS_NAME+"_CSV"+File.separator;
+		}
 		
 		try {
 			Path derectory = Paths.get(CSV_PATH);

@@ -18,16 +18,29 @@ public class Handler extends Thread{
 	public void run() {
 		int prcsCnt = 0;
 		if(preHandler != null) {
-			TARGET_PATH = preHandler.handle(TARGET_PATH);
-			if(TARGET_PATH == null) prcsCnt = -1;
+			if(preHandler.initailize() ) {
+				TARGET_PATH = preHandler.handle(TARGET_PATH);				
+				if(TARGET_PATH == null) prcsCnt = -1;
+			}else {
+				prcsCnt = -1;
+			}
 		}
 		
 		if(mainHandler != null) {
-			prcsCnt = mainHandler.handle(TARGET_PATH, prcsCnt);	
+			if(mainHandler.initailize() ) {
+				prcsCnt = mainHandler.handle(TARGET_PATH, prcsCnt);					
+			}else {
+				prcsCnt = -1;
+			}
+			
 		}
 		
 		if(postHandler != null) {
-			prcsCnt = postHandler.handle(TARGET_PATH, prcsCnt);
+			if(postHandler.initailize() ) {
+				prcsCnt = postHandler.handle(TARGET_PATH, prcsCnt);				
+			}else {
+				prcsCnt = -1;
+			}
 		}
 	}
 	

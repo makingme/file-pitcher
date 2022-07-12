@@ -23,7 +23,7 @@ import kr.uracle.ums.sdk.util.UmsAlarmSender;
  * @see	: 알람 Method 지원 : public void sendAlarm(String msg)
  */
 public abstract class Detect {
-	
+	 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	protected final String PRCS_NAME;

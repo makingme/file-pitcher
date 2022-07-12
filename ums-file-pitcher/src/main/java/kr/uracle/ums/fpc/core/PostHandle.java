@@ -18,7 +18,7 @@ import kr.uracle.ums.sdk.util.UmsAlarmSender;
  * @see : 사용자 지정 설정(PARAM_MAP)에 POST_ALARM : Y 설정 정보 지정 시 전처리 실패 시 알람 발송 지원 
  */
 public abstract class PostHandle {
-	
+
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	protected final String PRCS_NAME;

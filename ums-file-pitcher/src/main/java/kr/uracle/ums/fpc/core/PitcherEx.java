@@ -5,7 +5,6 @@ import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
 import kr.uracle.ums.fpc.config.bean.PitcherConfigBean;
 import kr.uracle.ums.fpc.config.bean.RootConfigBean;
 import kr.uracle.ums.sdk.util.UmsAlarmSender;
-import kr.uracle.ums.sdk.util.UmsAlarmSender.CHANNEL;
 
 public class PitcherEx extends Thread{
 
@@ -51,6 +49,10 @@ public class PitcherEx extends Thread{
 	private PreHandle preHandler = null;
 	private MainHandle mainHandler = null;
 	private PostHandle postHandler = null;
+	
+	private String preClass = null;
+	private String mainClass = null;
+	private String postClass = null;
 	
 	public PitcherEx(String name, RootConfigBean rootConfigBean, PitcherConfigBean config) {
 		setName(name);
@@ -97,7 +99,7 @@ public class PitcherEx extends Thread{
 		}
 		
 		// 전처리기 생성
-		String preClass = PITCHER_CONFIG.getPREHANDLE_CLASS();
+		preClass = PITCHER_CONFIG.getPREHANDLE_CLASS();
 		if(StringUtils.isNotBlank(preClass)) {
 			preHandler = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, preClass, PreHandle.class);
 			if(preHandler == null) return false;
@@ -105,7 +107,7 @@ public class PitcherEx extends Thread{
 		}
 		
 		// 본처리기 생성
-		String mainClass = PITCHER_CONFIG.getMAINHANDLE_CLASS();
+		mainClass = PITCHER_CONFIG.getMAINHANDLE_CLASS();
 		if(StringUtils.isNotBlank(mainClass)) {
 			mainHandler = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, mainClass, MainHandle.class);
 			if(mainHandler == null) return false;
@@ -113,7 +115,7 @@ public class PitcherEx extends Thread{
 		}
 		
 		// 후처리기 생성
-		String postClass = PITCHER_CONFIG.getPOSTHANDLE_CLASS();
+		postClass = PITCHER_CONFIG.getPOSTHANDLE_CLASS();
 		if(StringUtils.isNotBlank(postClass)) {
 			postHandler = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, postClass, PostHandle.class);
 			if(postHandler == null) return false;
@@ -178,40 +180,60 @@ public class PitcherEx extends Thread{
 					continue;
 				}
 			}
-			
-			// 현재 Activate 상태의 핸드러만 추출
-			Iterator<Handler> iter = handlerList.iterator();
-			while(iter.hasNext()) {
-				Handler h = iter.next();
-				if(h.isAlive() == false) iter.remove();
-			}
-			
-			// 현재 가용 쓰레드 갯수 확인
-			int freeHandlerCnt = MAX_THREAD - handlerList.size();
-			if(freeHandlerCnt <= 0) {
-				logger.info("현재 모든 가용 쓰레드({})가 활성화 중입니다.", MAX_THREAD);
+			int totalCnt = pathList.size(); 
+			try {
+				while(pathList.size()>0){
+					// 현재 Activate 상태의 핸드러만 추출
+					Iterator<Handler> iter = handlerList.iterator();
+					while(iter.hasNext()) {
+						Handler h = iter.next();
+						if(h.isAlive() == false) iter.remove();
+					}
+					
+					// 현재 가용 쓰레드 갯수 확인
+					int freeHandlerCnt = MAX_THREAD - handlerList.size();
+					if(freeHandlerCnt <= 0) {
+						logger.info("현재 모든 가용 쓰레드({})가 활성화 중입니다.", MAX_THREAD);
+						continue;
+					}
+					// 가용 가능한 쓰레드 갯수 만큼 파일 처리
+					int fileCnt = pathList.size();
+					if(fileCnt > freeHandlerCnt) fileCnt =  freeHandlerCnt;
+					
+					if(fileCnt == 0 ) continue;
+					
+					// 핸들러 파일 처리
+					for(int i =0; i<fileCnt ; i++) {
+						Path p = pathList.remove(0);
+						Handler h = new Handler(p);
+						if(preClass != null) {
+							PreHandle newPre = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, preClass, PreHandle.class);
+							h.setPreHandler(newPre);
+						}
+						
+						if(mainHandler != null) {
+							MainHandle newMain = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, mainClass, MainHandle.class);
+							h.setMainHandler(newMain);
+						}
+						
+						if(postHandler != null) {
+							PostHandle postMain = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, postClass, PostHandle.class);
+							h.setPostHandler(postMain);
+						}
+						h.start();
+					}
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+				sendAlarm(TARGET_PATH+" 파일 처리 중 에러 발생:"+e);
+				errorCnt++;
 				continue;
 			}
-			// 가용 가능한 쓰레드 갯수 만큼 파일 처리
-			int fileCnt = pathList.size();
-			if(fileCnt > freeHandlerCnt) fileCnt =  freeHandlerCnt;
-			
-			if(fileCnt == 0 ) continue;
-			
-			// 핸들러 파일 처리
-			for(int i =0; i<fileCnt ; i++) {
-				Path p = pathList.get(i);
-				Handler h = new Handler(p);
-				h.setPreHandler(preHandler);
-				h.setMainHandler(mainHandler);
-				h.setPostHandler(postHandler);
-				h.start();
-			}
-			
+
 			//에러 횟수 초기화
 			errorCnt = 1;
 			leadTime = System.currentTimeMillis() - startTime;
-			logger.info("파일 처리 완료, 처리 파일:{}개, 처리 시간:{}ms", pathList.size(), leadTime);
+			logger.info("파일 처리 완료, 처리 파일:{}개, 처리 시간:{}ms", totalCnt, leadTime);
 			status = PitcherStatus.DONE;
 		}
 	}
