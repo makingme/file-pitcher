@@ -9,7 +9,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
 import kr.uracle.ums.sdk.util.UmsAlarmSender;
 
 /**

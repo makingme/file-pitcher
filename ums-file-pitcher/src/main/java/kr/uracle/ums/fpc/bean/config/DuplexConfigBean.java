@@ -1,4 +1,4 @@
-package kr.uracle.ums.fpc.config.bean;
+package kr.uracle.ums.fpc.bean.config;
 
 public class DuplexConfigBean {
 

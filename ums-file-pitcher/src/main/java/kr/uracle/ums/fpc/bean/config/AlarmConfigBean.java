@@ -1,4 +1,4 @@
-package kr.uracle.ums.fpc.config.bean;
+package kr.uracle.ums.fpc.bean.config;
 
 import java.util.ArrayList;
 import java.util.List;

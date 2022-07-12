@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.MalformedJsonException;
 
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
-import kr.uracle.ums.fpc.config.bean.old.PitcherConfigBean;
-import kr.uracle.ums.fpc.core.old.Handler;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
+import kr.uracle.ums.fpc.old.Handler;
+import kr.uracle.ums.fpc.old.PitcherConfigBean;
 import kr.uracle.ums.sdk.UmsPotalClient;
 import kr.uracle.ums.sdk.vo.ResultVo;
 import kr.uracle.ums.sdk.vo.TargetUserKind;

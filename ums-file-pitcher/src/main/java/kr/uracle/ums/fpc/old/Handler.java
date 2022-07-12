@@ -1,4 +1,4 @@
-package kr.uracle.ums.fpc.core.old;
+package kr.uracle.ums.fpc.old;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,8 +21,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVWriter;
 
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
-import kr.uracle.ums.fpc.config.bean.old.PitcherConfigBean;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
 import kr.uracle.ums.fpc.tps.TpsManager;
 
 public abstract class Handler extends Thread{

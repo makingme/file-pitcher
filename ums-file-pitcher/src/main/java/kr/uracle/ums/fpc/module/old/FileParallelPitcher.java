@@ -11,10 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
-import kr.uracle.ums.fpc.config.bean.old.PitcherConfigBean;
-import kr.uracle.ums.fpc.core.old.Handler;
-import kr.uracle.ums.fpc.core.old.Pitcher;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
+import kr.uracle.ums.fpc.old.Handler;
+import kr.uracle.ums.fpc.old.Pitcher;
+import kr.uracle.ums.fpc.old.PitcherConfigBean;
 
 public class FileParallelPitcher extends Pitcher{
 	

@@ -11,7 +11,7 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
 import kr.uracle.ums.fpc.tcpchecker.TcpAliveConManager;
 import kr.uracle.ums.sdk.httppoolclient.HttpPoolClient;
 import kr.uracle.ums.sdk.httppoolclient.ResponseBean;

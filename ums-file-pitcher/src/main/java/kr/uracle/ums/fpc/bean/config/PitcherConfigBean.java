@@ -1,4 +1,4 @@
-package kr.uracle.ums.fpc.config.bean;
+package kr.uracle.ums.fpc.bean.config;
 
 import java.util.HashMap;
 import java.util.Map;

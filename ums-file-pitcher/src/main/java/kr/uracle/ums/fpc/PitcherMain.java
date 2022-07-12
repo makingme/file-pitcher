@@ -3,10 +3,10 @@ package kr.uracle.ums.fpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
-import kr.uracle.ums.fpc.config.bean.old.ConfigManager;
-import kr.uracle.ums.fpc.config.bean.old.RootConfigBean;
-import kr.uracle.ums.fpc.core.old.FilePitcherManager;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
+import kr.uracle.ums.fpc.old.ConfigManager;
+import kr.uracle.ums.fpc.old.FilePitcherManager;
+import kr.uracle.ums.fpc.old.RootConfigBean;
 import kr.uracle.ums.fpc.tcpchecker.TcpAliveConManager;
 import kr.uracle.ums.fpc.tps.TpsManager;
 

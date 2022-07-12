@@ -9,13 +9,13 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.ConfigManager;
-import kr.uracle.ums.fpc.config.bean.PitcherConfigBean;
-import kr.uracle.ums.fpc.config.bean.RootConfigBean;
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
+import kr.uracle.ums.fpc.bean.config.PitcherConfigBean;
+import kr.uracle.ums.fpc.bean.config.RootConfigBean;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
 import kr.uracle.ums.fpc.core.PitcherEx;
 import kr.uracle.ums.fpc.tcpchecker.TcpAliveConManager;
 import kr.uracle.ums.fpc.tps.TpsManager;
+import kr.uracle.ums.fpc.utils.ConfigManager;
 
 public class PitcherManager extends Thread{
 

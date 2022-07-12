@@ -1,4 +1,4 @@
-package kr.uracle.ums.fpc.core.old;
+package kr.uracle.ums.fpc.old;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -16,11 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.bean.DuplexConfigBean;
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
-import kr.uracle.ums.fpc.config.bean.old.PitcherConfigBean;
-import kr.uracle.ums.fpc.config.bean.old.RootConfigBean;
-import kr.uracle.ums.fpc.core.old.Pitcher.PitcherStatus;
+import kr.uracle.ums.fpc.bean.config.DuplexConfigBean;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
+import kr.uracle.ums.fpc.old.Pitcher.PitcherStatus;
 
 public class FilePitcherManager extends Thread{
 

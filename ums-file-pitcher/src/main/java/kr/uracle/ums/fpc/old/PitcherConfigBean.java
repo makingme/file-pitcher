@@ -1,11 +1,11 @@
-package kr.uracle.ums.fpc.config.bean.old;
+package kr.uracle.ums.fpc.old;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
 
 public class PitcherConfigBean {
 	

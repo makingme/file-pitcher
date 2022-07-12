@@ -1,4 +1,4 @@
-package kr.uracle.ums.fpc.core.old;
+package kr.uracle.ums.fpc.old;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -19,9 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
-import kr.uracle.ums.fpc.config.bean.old.PitcherConfigBean;
+import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.UmsMonitoringConfigBean;
 
 public abstract class Pitcher extends Thread{
 

@@ -1,15 +1,10 @@
-package kr.uracle.ums.fpc.config.bean.old;
+package kr.uracle.ums.fpc.bean.config;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
-import kr.uracle.ums.fpc.config.bean.DuplexConfigBean;
-import kr.uracle.ums.fpc.config.bean.UmsMonitoringConfigBean;
-
 public class RootConfigBean {		
 	
-	private String TIME_UNIT = "SEC";
 	private String BASE_PATH;
 	
 	private UmsMonitoringConfigBean UMS_MONIT;
@@ -19,10 +14,7 @@ public class RootConfigBean {
 	private Map<String, PitcherConfigBean> PITCHERS = new HashMap<String, PitcherConfigBean>(5);
 		
 	private AlarmConfigBean ALARM;
-	
-	public String getTIME_UNIT() { return TIME_UNIT; }
-	public void setTIME_UNIT(String tIME_UNIT) { TIME_UNIT = tIME_UNIT;	}
-	
+		
 	public String getBASE_PATH() { return BASE_PATH; }
 	public void setBASE_PATH(String bASE_PATH) { BASE_PATH = bASE_PATH;	}
 	
@@ -33,7 +25,7 @@ public class RootConfigBean {
 	public void setDUPLEX(DuplexConfigBean dUPLEX) { DUPLEX = dUPLEX; }
 		
 	public Map<String, PitcherConfigBean> getPITCHERS() { return PITCHERS; }
-	public void setPITCHERS(Map<String, PitcherConfigBean> PITCHERS) { this.PITCHERS = PITCHERS;}
+	public void setPITCHERS(Map<String, PitcherConfigBean> PITCHERS) { this.PITCHERS = PITCHERS; }
 	
 	public AlarmConfigBean getALARM() { return ALARM; }
 	public void setALARM(AlarmConfigBean aLARM) { ALARM = aLARM; }

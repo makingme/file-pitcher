@@ -25,7 +25,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVWriter;
 
-import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
 import kr.uracle.ums.fpc.core.MainHandle;
 import kr.uracle.ums.fpc.tps.TpsManager;
 import kr.uracle.ums.sdk.UmsPotalClient;

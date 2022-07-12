@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
-import kr.uracle.ums.fpc.config.bean.PitcherConfigBean;
-import kr.uracle.ums.fpc.config.bean.RootConfigBean;
+import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.PitcherConfigBean;
+import kr.uracle.ums.fpc.bean.config.RootConfigBean;
 import kr.uracle.ums.sdk.util.UmsAlarmSender;
 
 public class PitcherEx extends Thread{

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import kr.uracle.ums.fpc.config.bean.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
 import kr.uracle.ums.fpc.core.Detect;
 
 /**
