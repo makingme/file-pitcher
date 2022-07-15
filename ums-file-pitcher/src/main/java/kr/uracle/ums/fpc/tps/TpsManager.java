@@ -1,5 +1,6 @@
 package kr.uracle.ums.fpc.tps;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class TpsManager {
     private  String PROGRAM_ID;
     private  String SERVER_ID;
     private  String SERVER_NAME;
+    private  String API_PATH;
     private  long CYCLE_TIME;
     
     private final Timer scheduler = new Timer();;
@@ -46,6 +48,7 @@ public class TpsManager {
     	this.PROGRAM_ID = config.getPROGRAM_ID();
         this.SERVER_ID = config.getSERVER_ID();
         this.SERVER_NAME = config.getSERVER_NAME();
+        this.API_PATH = config.getAPI_PATH();
         this.CYCLE_TIME = config.getCYCLE_TIME();
         startScheduler();
     }
@@ -214,7 +217,9 @@ public class TpsManager {
                 try {
                     // UMS에 모니터링정보 수집할수 있도록 호출
                     String ums_host_url = TcpAliveConManager.getInstance().getConHostName();
-                    String umsCallApi = ums_host_url;
+                    if(ums_host_url.endsWith(File.separator)==false)ums_host_url+=File.separator;
+                    if(API_PATH.startsWith(File.separator)) API_PATH = API_PATH.substring(1);
+                    String umsCallApi = ums_host_url+API_PATH;
                     Map<String,Object> reqParam = new HashMap<>();
                     reqParam.put("PROGRAM_ID"	,	PROGRAM_ID);
                     reqParam.put("SERVER_ID"	,	SERVER_ID);

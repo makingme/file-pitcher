@@ -1,54 +1,86 @@
 {
-	"NOTE":"기능별 모듈를 만들어서 조립하는 개념으로 변경 해야함, 예를 들어 디렉토리 탐지하는 모듈, 파일을 처리하는 모듈, 알람 모듈 등등을 합치기",
+	"NOTE": "기능별 모듈를 만들어서 조립하는 개념으로 변경 해야함, 예를 들어 디렉토리 탐지하는 모듈, 파일을 처리하는 모듈, 알람 모듈 등등을 합치기",
 	"TIME_UNIT": "SEC",
 	"BASE_PATH": "D:\\TEST\\PITCHER\\",
-	
 	"UMS_MONIT": {
 		"PROGRAM_ID": "FILE_PITCHER",
 		"SERVER_NAME": "UMS_FILE_PITCHER",
 		"CYCLE_TIME": 60,
-		"UMS_IPADREESS" : ["http://localhost:8080/api/monit/report.ums", "http://211.241.199.139:8080/api/monit/report.ums"]
+		"UMS_IPADREESS": [
+			"http://localhost:8080/",
+			"http://211.241.199.139:8080/"
+		],
+		"API_PATH" : "api/monit/report.ums"
 	},
-	
 	"DUPLEX": {
 		"ACTIVATION": true,
 		"DUPLEX_TYPE": "FILE",
 		"IS_MASTER": true,
 		"EXPIRY_TIME": 30
 	},
-	
-	"PITCHERS":{
+	"PITCHERS": {
 		"A_PITCHER": {
-			"PATH":"D:\\TEST\\PITCHEREX\\RECEIVE\\",
-			"MAX_THREAD":10,
+			"PATH": "D:\\TEST\\PITCHEREX\\RECEIVE\\",
+			"MAX_THREAD": 10,
 			"CYCLE": 3000,
-			"DETECTION_CLASS":"kr.uracle.ums.fpc.module.detect.BasicDetect",
-			"FILTER_CLASS":"kr.uracle.ums.fpc.module.filter.ZeroFileFilter",
-			"PREHANDLE_CLASS":"kr.uracle.ums.fpc.module.preHandle.FileMovePreHandle",
-			"MAINHANDLE_CLASS":"kr.uracle.ums.fpc.module.mainHandle.CsvSendMainHandle",
-			"POSTHANDLE_CLASS":"kr.uracle.ums.fpc.module.postHandle.ResultMovePostHandle",
-			"PARAM_MAP": {
-				"DETECT_ALARM" : "N",
-				"FILTER_ALARM": "N",
-				"PRE_ALARM" : "N",
-				"MAIN_ALARM" : "N",
-				"POST_ALARM" : "N",
-				"WATCH_TIME": "15000",
-				"PATTERN": ".+[\\.]txt$",
-				"ERROR_PATH" : "D:\\TEST\\PITCHEREX\\ERROR\\",
-				"DATE_PATTEN" : "yyyyMMdd_HHmmss",
-				"PROCCESS_PATH" : "D:\\TEST\\PITCHEREX\\PROCCESS\\",
-				"HEADER_LIST" : ["아이디", "이름", "핸드폰번호"],
-				"URL"	: "http://localhost:8080/",
-				"TRANS_TYPE"	: "BATCH",
-				"SUCCESS_PATH" : "D:\\TEST\\PITCHEREX\\SUCCESS\\",
-				"FAIL_PATH" : "D:\\TEST\\PITCHEREX\\FAIL\\"
+			"DETECTION": {
+				"NAME"		:"PATTER_FILE_DETECTOR",
+				"CLASS_NAME":"kr.uracle.ums.fpc.module.detect.BasicDetect",
+				"ALARM_ACTIVATION" : false,
+				"PARAM_MAP" : {
+					"WATCH_TIME": "15000",
+					"PATTERN": ".+[\\.]txt$"
+				}
+			},
+			"FILTER": {
+				"NAME"		:"ZEROSIZE_FILTER",
+				"CLASS_NAME":"kr.uracle.ums.fpc.module.filter.ZeroFileFilter",
+				"ALARM_ACTIVATION" : false,
+				"PARAM_MAP" : {
+					"ERROR_PATH": "D:\\TEST\\PITCHEREX\\ERROR\\"
+				}
+			},
+			"PREHANDLE":{
+				"NAME"		:"PRE_FILE_MOVER",
+				"CLASS_NAME":"kr.uracle.ums.fpc.module.preHandle.FileMovePreHandle",
+				"ALARM_ACTIVATION" : false,
+				"PARAM_MAP" : {
+					"DATE_PATTEN": "yyyyMMdd_HHmmss",
+					"PROCCESS_PATH": "D:\\TEST\\PITCHEREX\\PROCCESS\\"
+				}
+			},
+			 
+			"MAINHANDLE":{
+				"NAME"		:"UMS_CSV_SENDER",
+				"CLASS_NAME":"kr.uracle.ums.fpc.module.mainHandle.CsvSendMainHandle",
+				"ALARM_ACTIVATION" : false,
+				"PARAM_MAP" : {
+					"ERROR_PATH": "D:\\TEST\\PITCHEREX\\ERROR\\",
+					"CSV_PATH": "D:\\TEST\\PITCHEREX\\CSV\\",
+					"HEADER_LIST": [
+						"아이디",
+						"이름",
+						"핸드폰번호"
+					],
+					"DELIMETER" : "\\|",
+					"URL": "http://localhost:8080/api/send/potalSendApi.ums",
+					"TRANS_TYPE": "BATCH"
+				}
+			}, 
+			
+			"POSTHANDLE":{
+				"NAME"		:"AFTER_FILE_MOVER",
+				"CLASS_NAME":"kr.uracle.ums.fpc.module.postHandle.ResultMovePostHandle",
+				"ALARM_ACTIVATION" : false,
+				"PARAM_MAP" : {
+					"SUCCESS_PATH": "D:\\TEST\\PITCHEREX\\SUCCESS\\",
+					"FAIL_PATH": "D:\\TEST\\PITCHEREX\\FAIL\\"
+				}
 			}
 		}
 	},
-	
 	"ALARM": {
-		"URL":"http://211.241.199.137:8080/api/monit/alarmSendApi.ums",
+		"URL": "http://211.241.199.137:8080/api/monit/alarmSendApi.ums",
 		"SEND_CHANNEL": "SMS",
 		"MESSAGE": "[AP1 파일 AGT] "
 	},

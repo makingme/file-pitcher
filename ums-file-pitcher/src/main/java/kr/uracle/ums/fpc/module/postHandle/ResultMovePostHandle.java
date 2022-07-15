@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.ModuleConfigBean;
 import kr.uracle.ums.fpc.core.PostHandle;
 
 /**
@@ -26,10 +27,9 @@ public class ResultMovePostHandle extends PostHandle{
 	private String SUCCESS_PATH;
 	private String FAIL_PATH;
 
-	public ResultMovePostHandle(String PRCS_NAME, Map<String, Object> PARAM_MAP, AlarmConfigBean ALARM_CONFIG) {
-		super(PRCS_NAME, PARAM_MAP, ALARM_CONFIG);
+	public ResultMovePostHandle(ModuleConfigBean MODULE_CONFIG, AlarmConfigBean ALARM_CONFIG) {
+		super(MODULE_CONFIG, ALARM_CONFIG);
 	}
-	
 
 	@Override
 	public boolean initailize() {
@@ -68,6 +68,7 @@ public class ResultMovePostHandle extends PostHandle{
 			}
 			Path movePath = Paths.get(destination+path.getFileName());
 			Files.move(path, movePath, StandardCopyOption.REPLACE_EXISTING);
+			logger.info("{} 처리 {}에 따른 {} 경로로 이동", path, mainResultCode >= 0 ?"성공":"실패", movePath);
 		} catch (IOException e) {
 			logger.error("{} 파일 결과:{} 에 따른, 후처리(파일 이동) 중에 에러 발생:{}", path.toString(), mainResultCode,  e);
 			return -1;

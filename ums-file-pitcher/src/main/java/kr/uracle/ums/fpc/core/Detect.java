@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.ModuleConfigBean;
 import kr.uracle.ums.sdk.util.UmsAlarmSender;
 
 /**
@@ -34,19 +35,17 @@ public abstract class Detect {
 	
 	protected final boolean needAlarm;
 	
+
 	/**
-	 * @param PRCS_NAME : 프로세스 명
-	 * @param PARAM_MAP : 사용자 지정 설정 값 - 설정 파일에서 값 지정 가능
-	 * @param ALARM_CONFIG : 알람 설정 정보 - 발송채널, 발송UMS URL, 알람 고정 문구(PREFIX) 
+	 * @param MODULE_CONFIG	: 모듈 설정 정보 - 모듈명, 알람여부, 구현클래스명, 지정 변수맵
+	 * @param ALARM_CONFIG  : 알람 설정 정보 - 발송채널, 발송UMS URL, 알람 고정 문구(PREFIX)
 	 */
-	public Detect(String PRCS_NAME, Map<String, Object> PARAM_MAP, AlarmConfigBean ALARM_CONFIG) {
-		this.PRCS_NAME = PRCS_NAME;
-		this.PARAM_MAP = PARAM_MAP;
+	public Detect(ModuleConfigBean MODULE_CONFIG, AlarmConfigBean ALARM_CONFIG) {
+		this.PRCS_NAME = MODULE_CONFIG.getNAME()==null?this.getClass().getSimpleName():MODULE_CONFIG.getNAME();
+		this.PARAM_MAP = MODULE_CONFIG.getPARAM_MAP();
 		this.ALARM_CONFIG = ALARM_CONFIG;
 		
-		Object o =PARAM_MAP.get("DETECT_ALARM");
-		String yn = ObjectUtils.isEmpty(o)?"N":o.toString();
-		needAlarm = yn.equalsIgnoreCase("Y")?true:false;
+		needAlarm = MODULE_CONFIG.isALARM_ACTIVATION();
 	}
 	
 	/**

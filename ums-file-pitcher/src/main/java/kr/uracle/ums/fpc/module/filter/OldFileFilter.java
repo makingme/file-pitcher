@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.ModuleConfigBean;
 import kr.uracle.ums.fpc.core.Filter;
 
 /**
@@ -17,11 +18,11 @@ import kr.uracle.ums.fpc.core.Filter;
 public class OldFileFilter extends Filter{
 
 	private long EXPIRY_TIME = 7*24*60*60*1000;
-	
-	public OldFileFilter(String PRCS_NAME, Map<String, Object> PARAM_MAP, AlarmConfigBean ALARM_CONFIG) {
-		super(PRCS_NAME, PARAM_MAP, ALARM_CONFIG);
-	}
 
+	public OldFileFilter(ModuleConfigBean MODULE_CONFIG, AlarmConfigBean ALARM_CONFIG) {
+		super(MODULE_CONFIG, ALARM_CONFIG);
+	}
+	
 	@Override
 	public boolean initailize() {
 		Object eObj = PARAM_MAP.get("EXPIRY_TIME");

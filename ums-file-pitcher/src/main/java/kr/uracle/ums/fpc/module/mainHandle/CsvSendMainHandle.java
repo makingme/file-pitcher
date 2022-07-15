@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVWriter;
 
 import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.ModuleConfigBean;
 import kr.uracle.ums.fpc.core.MainHandle;
 import kr.uracle.ums.fpc.tps.TpsManager;
 import kr.uracle.ums.sdk.UmsPotalClient;
@@ -60,10 +61,9 @@ public class CsvSendMainHandle extends MainHandle{
 	
 	private final Gson gson = new Gson();
 		
-	public CsvSendMainHandle(String PRCS_NAME, Map<String, Object> PARAM_MAP, AlarmConfigBean ALARM_CONFIG) {
-		super(PRCS_NAME, PARAM_MAP, ALARM_CONFIG);	
+	public CsvSendMainHandle(ModuleConfigBean MODULE_CONFIG, AlarmConfigBean ALARM_CONFIG) {
+		super(MODULE_CONFIG, ALARM_CONFIG);
 	}
-	
 
 	@Override
 	public boolean initailize() {
@@ -106,7 +106,7 @@ public class CsvSendMainHandle extends MainHandle{
 
 	@Override
 	public int process(Path path, int preResultCode) {
-		int prcsCnt = 0;
+		int prcsCnt = -1;
 		
 		if(StringUtils.isBlank(ERROR_PATH)) {
 			ERROR_PATH = path.getParent().getParent()+File.separator+PRCS_NAME+"_ERROR"+File.separator;
@@ -156,14 +156,16 @@ public class CsvSendMainHandle extends MainHandle{
 		umsVo.setCSVFILE_ABS_SRC(CSV_FILE_PATH);
 		
 		ResultVo resultVo = umsPotalClient.umsSend(umsVo, 30);
-		prcsCnt = resultVo.getRESULTCODE().equals("0000")?prcsCnt:-1; 
-		if(prcsCnt<0 && StringUtils.isNotBlank(resultVo.getRESULTMSG())) {
+		prcsCnt = resultVo.getRESULTCODE().equals("0000")?prcsCnt:-1; 			
+
+		if(prcsCnt<0 &&  StringUtils.isNotBlank(resultVo.getRESULTMSG())) {
 			logger.warn("{} 파일 본 처리 실패", path);
 			try {
 				String FILE_NAME =path.getFileName().toString();
 				String errorLogFile = ERROR_PATH+File.separator+ FILE_NAME.substring(0, FILE_NAME.lastIndexOf("."))+"_error.log";
-				Files.write(Paths.get(errorLogFile), resultVo.getRESULTMSG().getBytes());
-			} catch (IOException e) { logger.error("무시 - 실패 로그({}) 작성 중 에러", path.toString());}
+				String errorMsg = "결과코드:"+resultVo.getRESULTCODE()+" - "+resultVo.getRESULTMSG();
+				Files.write(Paths.get(errorLogFile), errorMsg.getBytes());
+			} catch (IOException e) { logger.error("무시 - 파일 본 처리 실패에 따른 원인 로그 작성 중 에러", path.toString());}
 		}
 
 		return prcsCnt;

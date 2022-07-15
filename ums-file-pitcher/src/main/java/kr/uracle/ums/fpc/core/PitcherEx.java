@@ -9,11 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.ModuleConfigBean;
 import kr.uracle.ums.fpc.bean.config.PitcherConfigBean;
 import kr.uracle.ums.fpc.bean.config.RootConfigBean;
 import kr.uracle.ums.sdk.util.UmsAlarmSender;
@@ -50,9 +52,9 @@ public class PitcherEx extends Thread{
 	private MainHandle mainHandler = null;
 	private PostHandle postHandler = null;
 	
-	private String preClass = null;
-	private String mainClass = null;
-	private String postClass = null;
+	private ModuleConfigBean preConfig = null;
+	private ModuleConfigBean mainConfig = null;
+	private ModuleConfigBean postConfig = null;
 	
 	public PitcherEx(String name, RootConfigBean rootConfigBean, PitcherConfigBean config) {
 		setName(name);
@@ -62,8 +64,10 @@ public class PitcherEx extends Thread{
 	}
 
 	public boolean initailize(){
+		// 파일 처리 핸들러 관리 리스트
 		handlerList = new ArrayList<Handler>(MAX_THREAD);
 		
+		// 목적 경로 설정
 		String path = PITCHER_CONFIG.getPATH();
 		if(StringUtils.isBlank(path)) {
 			logger.error("PATH 설정이 누락됨");
@@ -75,49 +79,50 @@ public class PitcherEx extends Thread{
 		}
 		TARGET_PATH = Paths.get(path);
 		
+		// 수행 주기 설정
 		if(PITCHER_CONFIG.getCYCLE() != null && PITCHER_CONFIG.getCYCLE() > 0) {
 			CYCLE_TIME = PITCHER_CONFIG.getCYCLE();
 		}
 		
 		// DETECT 생성
-		String detectClass = PITCHER_CONFIG.getDETECTION_CLASS();
-		if(StringUtils.isBlank(detectClass)) {
+		ModuleConfigBean detectConfig = PITCHER_CONFIG.getDETECTION();
+		if(ObjectUtils.isEmpty(detectConfig) || StringUtils.isBlank(detectConfig.getCLASS_NAME())) {
 			logger.error("DETECTION_CLASS 설정이 누락됨");
 			return false;
 		}
 		
-		detect = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, detectClass, Detect.class);
+		detect = generateDetect(detectConfig, ALARM_CONFIG, Detect.class);
 		if(detect == null) return false;
 		if(detect.initailize() == false)return false;
 		
 		// 필터 생성
-		String filterClass = PITCHER_CONFIG.getFILTER_CLASS();
-		if(StringUtils.isNotBlank(filterClass)) {
-			filter = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, filterClass, Filter.class);
+		ModuleConfigBean filterConfig = PITCHER_CONFIG.getFILTER();
+		if(ObjectUtils.isNotEmpty(filterConfig) && StringUtils.isNotBlank(filterConfig.getCLASS_NAME())) {
+			filter = generateDetect(filterConfig, ALARM_CONFIG,  Filter.class);
 			if(filter == null) return false;
 			if(filter.initailize() == false)return false;
 		}
 		
 		// 전처리기 생성
-		preClass = PITCHER_CONFIG.getPREHANDLE_CLASS();
-		if(StringUtils.isNotBlank(preClass)) {
-			preHandler = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, preClass, PreHandle.class);
+		preConfig = PITCHER_CONFIG.getPREHANDLE();
+		if(ObjectUtils.isNotEmpty(preConfig) && StringUtils.isNotBlank(preConfig.getCLASS_NAME())) {
+			preHandler = generateDetect(preConfig, ALARM_CONFIG, PreHandle.class);
 			if(preHandler == null) return false;
 			if(preHandler.initailize() == false)return false;
 		}
 		
 		// 본처리기 생성
-		mainClass = PITCHER_CONFIG.getMAINHANDLE_CLASS();
-		if(StringUtils.isNotBlank(mainClass)) {
-			mainHandler = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, mainClass, MainHandle.class);
+		mainConfig = PITCHER_CONFIG.getMAINHANDLE();
+		if(ObjectUtils.isNotEmpty(mainConfig) && StringUtils.isNotBlank(mainConfig.getCLASS_NAME())) {
+			mainHandler = generateDetect(mainConfig, ALARM_CONFIG, MainHandle.class);
 			if(mainHandler == null) return false;
 			if(mainHandler.initailize() == false)return false;
 		}
 		
 		// 후처리기 생성
-		postClass = PITCHER_CONFIG.getPOSTHANDLE_CLASS();
-		if(StringUtils.isNotBlank(postClass)) {
-			postHandler = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, postClass, PostHandle.class);
+		postConfig = PITCHER_CONFIG.getPOSTHANDLE();
+		if(ObjectUtils.isNotEmpty(postConfig) && StringUtils.isNotBlank(postConfig.getCLASS_NAME())) {
+			postHandler = generateDetect(postConfig, ALARM_CONFIG, PostHandle.class);
 			if(postHandler == null) return false;
 			if(postHandler.initailize() == false)return false;
 		}
@@ -206,19 +211,19 @@ public class PitcherEx extends Thread{
 					for(int i =0; i<fileCnt ; i++) {
 						Path p = pathList.remove(0);
 						Handler h = new Handler(p);
-						if(preClass != null) {
-							PreHandle newPre = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, preClass, PreHandle.class);
+						if(preHandler != null) {
+							PreHandle newPre = generateDetect(preConfig, ALARM_CONFIG, PreHandle.class);
 							h.setPreHandler(newPre);
 						}
 						
 						if(mainHandler != null) {
-							MainHandle newMain = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, mainClass, MainHandle.class);
+							MainHandle newMain = generateDetect(mainConfig, ALARM_CONFIG, MainHandle.class);
 							h.setMainHandler(newMain);
 						}
 						
 						if(postHandler != null) {
-							PostHandle postMain = generateDetect(getName(), PITCHER_CONFIG.getPARAM_MAP(), ALARM_CONFIG, postClass, PostHandle.class);
-							h.setPostHandler(postMain);
+							PostHandle newPost = generateDetect(postConfig, ALARM_CONFIG, PostHandle.class);
+							h.setPostHandler(newPost);
 						}
 						h.start();
 					}
@@ -238,13 +243,13 @@ public class PitcherEx extends Thread{
 		}
 	}
 
-	private <T> T generateDetect(String prcsName, Map<String, Object>  PARAM_MAP, AlarmConfigBean alarmConfig, String className, Class<T> clazz) {
+	private <T> T generateDetect(ModuleConfigBean modulConfig, AlarmConfigBean alarmConfig, Class<T> clazz) {
 		try {
-			Class<?> targetClass = Class.forName(className);
-			Constructor<?> ctor = targetClass.getDeclaredConstructor(String.class, Map.class, AlarmConfigBean.class);
-			return clazz.cast(ctor.newInstance(prcsName, PARAM_MAP, alarmConfig));
+			Class<?> targetClass = Class.forName(modulConfig.getCLASS_NAME());
+			Constructor<?> ctor = targetClass.getDeclaredConstructor(ModuleConfigBean.class, AlarmConfigBean.class);
+			return clazz.cast(ctor.newInstance(modulConfig, alarmConfig));
 		} catch (Exception e) {
-			logger.error("{} 생성 중 에러 발생:{}", className, e);
+			logger.error("{} 생성 중 에러 발생:{}", modulConfig.getCLASS_NAME(), e);
 			e.printStackTrace();
 			return null;
 		}

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.ModuleConfigBean;
 import kr.uracle.ums.fpc.core.Filter;
 
 /**
@@ -25,8 +26,8 @@ public class ZeroFileFilter extends Filter{
 	
 	private String ERROR_PATH; 
 	
-	public ZeroFileFilter(String PRCS_NAME, Map<String, Object> PARAM_MAP, AlarmConfigBean ALARM_CONFIG) {
-		super(PRCS_NAME, PARAM_MAP, ALARM_CONFIG);
+	public ZeroFileFilter(ModuleConfigBean MODULE_CONFIG, AlarmConfigBean ALARM_CONFIG) {
+		super(MODULE_CONFIG, ALARM_CONFIG);
 	}
 	
 	@Override

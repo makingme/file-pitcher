@@ -18,6 +18,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.uracle.ums.fpc.bean.config.AlarmConfigBean;
+import kr.uracle.ums.fpc.bean.config.ModuleConfigBean;
 import kr.uracle.ums.fpc.core.Detect;
 
 /**
@@ -31,8 +32,8 @@ public class BasicDetect extends Detect{
 	private long WATCH_TIME = 15*1000;
 	private String PATTERN;
 	
-	public BasicDetect(String PRCS_NAME, Map<String, Object> PARAM_MAP, AlarmConfigBean alramConfig) {
-		super(PRCS_NAME, PARAM_MAP, alramConfig);
+	public BasicDetect(ModuleConfigBean MODULE_CONFIG, AlarmConfigBean ALARM_CONFIG) {
+		super(MODULE_CONFIG, ALARM_CONFIG);
 	}
 
 	@Override
@@ -121,7 +122,7 @@ public class BasicDetect extends Detect{
 	}
 	
 	public static void main(String[] args) {
-		Detect d = new BasicDetect("", new HashMap<String, Object>(), new AlarmConfigBean());
+		Detect d = new BasicDetect(new ModuleConfigBean(), new AlarmConfigBean());
 		Runnable r = new Runnable() {
 			
 			@Override

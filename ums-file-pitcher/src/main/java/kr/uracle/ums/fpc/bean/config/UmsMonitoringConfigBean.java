@@ -15,6 +15,8 @@ public class UmsMonitoringConfigBean {
 	private long CYCLE_TIME = 60*1000;
 	// 타겟 UMS IP 주소 목록
 	private List<String> UMS_IPADREESS = new ArrayList<String>();
+	
+	private String API_PATH;
 
 	public String getPROGRAM_ID() { return PROGRAM_ID; }
 	public void setPROGRAM_ID(String pROGRAM_ID) { PROGRAM_ID = pROGRAM_ID;	}
@@ -30,5 +32,8 @@ public class UmsMonitoringConfigBean {
 	
 	public List<String> getUMS_IPADREESS() { return UMS_IPADREESS; }
 	public void setUMS_IPADREESS(List<String> uMS_IPADREESS) { UMS_IPADREESS = uMS_IPADREESS; }
+	
+	public String getAPI_PATH() { return API_PATH;	}
+	public void setAPI_PATH(String aPI_PATH) { API_PATH = aPI_PATH;	}
 	
 }
